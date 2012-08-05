@@ -4,12 +4,13 @@
 
 import java.text.SimpleDateFormat
 import java.util.TimeZone
-
 import javax.xml.bind.DatatypeConverter
+import scala.util.matching.Regex.Match
 
 object SportsTrackerGPXTimeFix {
   val Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S")
-  val TimeLine = "<time>(.*)</time>".r
+//  val TimeLine = "<time>(.*)</time>".r
+  val TimeLine = """(\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d)""".r
   
   def convert(date: String) : String = {
 	  val calendar = DatatypeConverter.parseDateTime(date) 
@@ -20,9 +21,10 @@ object SportsTrackerGPXTimeFix {
 	  return timezeonConvertedDate
   }
   
-  def convertTimeLine(x: String): String = x match {
-      case TimeLine(timeString) => convert(timeString)
-      case s => s
+  def convertTimeLine(timeLine: String): String = {
+    TimeLine.replaceAllIn(timeLine, (m: Match) =>
+      "%sZ".format(convert(m.group(1)))
+    )
    }
   
   def main(args: Array[String]) {
