@@ -4,38 +4,36 @@
 
 import java.text.SimpleDateFormat
 import java.util.TimeZone
-import javax.xml.bind.DatatypeConverter
+
+import scala.io.Source
 import scala.util.matching.Regex.Match
 
+import javax.xml.bind.DatatypeConverter
+
 object SportsTrackerGPXTimeFix {
-  val Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S")
-//  val TimeLine = "<time>(.*)</time>".r
-  val TimeLine = """(\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d)""".r
+  val Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
+  val TimeLine = """(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,3})""".r
   
   def convert(date: String) : String = {
 	  val calendar = DatatypeConverter.parseDateTime(date) 
 	  calendar.setTimeZone(TimeZone.getTimeZone("UTC"))
 	  
 	  val timezeonConvertedDate = Format.format(calendar.getTime())
-	  println(date + " -> " + timezeonConvertedDate)
 	  return timezeonConvertedDate
   }
   
   def convertTimeLine(timeLine: String): String = {
-    TimeLine.replaceAllIn(timeLine, (m: Match) =>
-      "%sZ".format(convert(m.group(1)))
+    TimeLine.replaceAllIn(timeLine, (m: Match) => 
+      convert(m.group(1)) + "Z"
     )
    }
   
   def main(args: Array[String]) {
-	  // Find file list, process each file
-//		x match {
-//	  case regex.matches => // Convert timezone and pass through
-//	  case _ => // pass through all lines
-//	}
-	  convert("2012-04-02T08:12:15.14")
-	  convert("2012-03-31T08:12:15.14")
-	  println(convertTimeLine("<ele>100.5</ele>"))
-	  println(convertTimeLine("<time>2012-04-02T08:12:15.14</time>"))
+	  if(args.length < 1)
+	    throw new IllegalArgumentException("Need to specify the file to process as an argument")
+	  
+	  Source.fromInputStream(this.getClass().getResourceAsStream(args(0))).getLines().foreach { line: String =>
+	    println(convertTimeLine(line))
+	  }
   }
 }
