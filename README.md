@@ -1,10 +1,12 @@
 # Sports Tracker GPX Time(Zone) Fix
 
-This Scala application normalises GPX time data exported from [Sports Tracker][SportsTracker] to UTC.
+This Scala application normalises [GPX][GPX] time data exported from [Sports Tracker][SportsTracker] to UTC.
 
-A bit of playing around with Scala. In the process of moving workout data from [Sports Tracker][SportsTracker] 
-to [Strava][Strava] it seemed like Sports Tracker file export was not complying with GPX time format and
-was not keeping timezone in UTC, so on import into [Strava][Strava], timing was out.
+In the process of moving workout data from [Sports Tracker][SportsTracker] 
+to [Strava][Strava], I found that [Sports Tracker][SportsTracker] file export was not keeping times exported relative to UTC, 
+so on import into [Strava][Strava] timings were incorrect for my timezone.
+
+This was written in Scala to play around with regex in Scala. 
 
 ## Note
 
@@ -12,3 +14,4 @@ was not keeping timezone in UTC, so on import into [Strava][Strava], timing was 
 
 [SportsTracker]: http://www.sports-tracker.com/  "Sports Tracker"
 [Strava]: http://app.strava.com/  "Strava"
+[GPX]: http://www.topografix.com/gpx.asp "GPX"
